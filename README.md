@@ -4,7 +4,8 @@ cfetch prints basic information about the system that launches it (e.g., kernel,
 ## Build
 1. download and cd into cfetch
 ```
-git clone
+git clone https://github.com/flamiglitch/cfetch.git
+cd cfetch
 ```
 2. compile with the command
 ```
