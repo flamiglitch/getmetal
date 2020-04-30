@@ -17,10 +17,18 @@ struct mem_args
   char units[3];
 };
 
+struct gpu_args
+{
+  int width;
+  int height;
+  int hz;
+  char* name;
+};
+
 struct name_args host_user;
 struct utsname kernel;
 struct mem_args memory;
-char* gpu_name;
+struct gpu_args gpu;
 char* cpu_name;
 char* board_name;
 char* distro_name;

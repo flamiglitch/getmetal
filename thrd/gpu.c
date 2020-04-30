@@ -1,69 +1,60 @@
 #include "gpu.h"
-#include <vulkan/vulkan.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <GLFW/glfw3.h>
+#include <GL/gl.h>
 #include <string.h>
+#include "../types.h"
 
 
 void* gpu_thrd(void* args)
 {
 
-  VkApplicationInfo applicationInfo;
-  VkInstanceCreateInfo instanceInfo;
-  VkInstance instance;
-
-
-  applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  applicationInfo.pNext = NULL;
-  applicationInfo.pApplicationName = "\0";
-  applicationInfo.pEngineName = NULL;
-  applicationInfo.engineVersion = 1;
-  applicationInfo.apiVersion = VK_API_VERSION_1_0;
-  instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  instanceInfo.pNext = NULL;
-  instanceInfo.flags = 0;
-  instanceInfo.pApplicationInfo = &applicationInfo;
-  instanceInfo.enabledLayerCount = 0;
-  instanceInfo.ppEnabledLayerNames = NULL;
-  instanceInfo.enabledExtensionCount = 0;
-  instanceInfo.ppEnabledExtensionNames = NULL;
-
-  if (vkCreateInstance(&instanceInfo, NULL, &instance) != VK_SUCCESS)
+  if (!glfwInit())
   {
-
-    
-    fprintf(stderr, "Failed to create instance\n");
-    vkDestroyInstance(instance, NULL);
+    fprintf(stderr, "failed to init glfw\n");
     exit(-1);
-
   }
 
+  GLFWmonitor* monitor    = glfwGetPrimaryMonitor();
+  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-  uint32_t deviceCount = 0;
-  vkEnumeratePhysicalDevices(instance, &deviceCount, NULL);
+  ((struct gpu_args*)args)->width  = mode->width;
+  ((struct gpu_args*)args)->height = mode->height;
+  ((struct gpu_args*)args)->hz     = mode->refreshRate;
 
-  if (deviceCount == 0)
+
+  glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+  GLFWwindow* window = glfwCreateWindow(640, 480, "", NULL, NULL);
+  
+  if (!window)
   {
-    fprintf(stderr, "failed to find GPUs with Vulkan support!\n");
+    fprintf(stderr, "failed to create renderer context\n");
+    exit(-1);
   }
 
-  VkPhysicalDevice* devices = (VkPhysicalDevice*) malloc(sizeof(VkPhysicalDevice) * deviceCount);
+  glfwMakeContextCurrent(window);
 
-  if (devices == NULL)
+  size_t len = strlen(glGetString(GL_RENDERER));
+  char* name = (char*) calloc(1, len + 1);
+  strcpy(name, glGetString(GL_RENDERER));
+  char* end  = strchr(name, '/');
+
+  glfwDestroyWindow(window);
+  glfwTerminate();
+
+  if (end != NULL)
   {
-    printf("malloc error\n");
+    
+    ((struct gpu_args*)args)->name = calloc(1, end - name + 1);
+    strncpy(((struct gpu_args*)args)->name, name, end - name);
+    free(name);
+
+  } else {
+
+    ((struct gpu_args*)args)->name = name;
+
   }
-
-  vkEnumeratePhysicalDevices(instance, &deviceCount, devices);
-  VkPhysicalDeviceProperties deviceProperties;
-  vkGetPhysicalDeviceProperties(devices[0], &deviceProperties);
-
-  free(devices);
-
-  *((char**)args) = (char*) malloc((strlen(deviceProperties.deviceName) + 1) * sizeof(char));
-  strcpy(*((char**)args), deviceProperties.deviceName);
-
-  vkDestroyInstance(instance, NULL);
 
   return(NULL);
 

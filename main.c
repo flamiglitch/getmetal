@@ -19,16 +19,18 @@ int main(int argc, const char** argv)
   pthread_create(&name_tid,   NULL, name_thrd,   (void *)&host_user);
   pthread_create(&kernel_tid, NULL, kernel_thrd, (void *)&kernel);
   pthread_create(&mem_tid,    NULL, mem_thrd,    (void *)&memory);
-  pthread_create(&gpu_tid,    NULL, gpu_thrd,    (void *)&gpu_name);
+  pthread_create(&gpu_tid,    NULL, gpu_thrd,    (void *)&gpu);
   pthread_create(&board_tid,  NULL, board_thrd,  (void *)&board_name);
   pthread_create(&distro_tid, NULL, distro_thrd, (void *)&distro_name);
-  cpu_thrd(&cpu_name);
+  pthread_create(&cpu_tid,    NULL, cpu_thrd,    (void *)&cpu_name);
+
 
   pthread_join(name_tid,   NULL);
   pthread_join(kernel_tid, NULL);
   pthread_join(mem_tid,    NULL);
   pthread_join(gpu_tid,    NULL);
   pthread_join(board_tid,  NULL);
+  pthread_join(cpu_tid,    NULL);
 
 
   printf("\n");
@@ -60,9 +62,9 @@ int main(int argc, const char** argv)
   #endif
 
   #if defined(GPU)
-    printf("%sGRAPHICS: %s\n", GPU, gpu_name);
+    printf("%sGRAPHICS: %s %dx%d@%dHz\n", GPU, gpu.name, gpu.width, gpu.height, gpu.hz);
   #else
-    printf("%sGRAPHICS: %s%s\n", PRIMARY, SECONDARY, gpu_name);
+    printf("%sGRAPHICS: %s%s %dx%d@%dHz\n", PRIMARY, SECONDARY, gpu.name, gpu.width, gpu.height, gpu.hz);
   #endif
 
   #if defined(CPU)
@@ -79,8 +81,8 @@ int main(int argc, const char** argv)
 
 
   printf("\033[0m");
-  free(cpu_name);
-  free(gpu_name);
+  free(cpu_name - 13);
+  free(gpu.name);
   free(board_name);
   free(distro_name);
 

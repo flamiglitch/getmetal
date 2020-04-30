@@ -1,7 +1,7 @@
-PROG    := cfetch
+PROG    := getmetal
 CC      := cc
-CCFLAGS := -Wall
-LIB     := -lpthread -lvulkan
+CCFLAGS :=
+LIB     := -lpthread -lGL -lglfw
 OBJ     := thrd/cpu.o thrd/gpu.o thrd/kernel.o thrd/board.o thrd/memory.o thrd/name.o thrd/distro.o
 OWNER   := $(shell stat -c "%U" /usr/bin)
 
@@ -23,7 +23,7 @@ clean:
 	rm -v $(OBJ) $(PROG)
 
 thrd/%.o: thrd/%.c
-	$(CC) -c $^ $(CCFLAGS) -o $@
+	$(CC) -c $^ $(CCFLAGS) $(LIB) -o $@
 
 thrd/cpu.o:    thrd/cpu.c
 thrd/gpu.o:    thrd/gpu.c
