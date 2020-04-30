@@ -2,10 +2,10 @@
 cfetch prints basic information about the system that launches it (e.g., kernel, CPU).
 
 ## Build
-1. download and cd into cfetch
+1. download and cd into getmetal
 ```
 git clone https://github.com/flamiglitch/getmetal.git
-cd cfetch
+cd getmetal
 ```
 2. compile with the command
 ```
