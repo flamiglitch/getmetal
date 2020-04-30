@@ -1,19 +1,19 @@
 # getmetal
-cfetch prints basic information about the system that launches it (e.g., kernel, CPU).
+getmetal prints basic information about the system that launches it (e.g., kernel, CPU).
 
 ## Build
 1. download and cd into getmetal
 ```
-git clone https://github.com/flamiglitch/getmetal.git
-cd getmetal
+$ git clone https://github.com/flamiglitch/getmetal.git
+$ cd getmetal
 ```
-2. compile with the command
+2. compile
 ```
-make
+$ make
 ```
-3. as the owner of /usr/bin (i.e. root or with sudo prefix) run
+3. install
 ```
-make install
+# make install
 ```
 
 ## License
